@@ -19,7 +19,7 @@ def plt_fig(input,ylabel,ylim,phase,name,event_n):
 		ax.label_outer()
 	
 	fig.tight_layout(rect=[0, 0.03, 1, 0.95])
-	fig.savefig('results_phase%.4f_%d/phase_plots_%s_%d.txt'%(phase,name,event_n))
+	fig.savefig('results_phase%.4f_%d/phase_plots_%s_%d.txt'%(phase,event_n,name,event_n))
 
 def main(progname,phase,event_n):
 	# array_phase1 = np.arange(-1.5*np.pi,0,0.25*np.pi)
@@ -75,6 +75,6 @@ def main(progname,phase,event_n):
 if __name__ == '__main__':
     PROGNAME    = sys.argv[0]
     PHASE       = float(sys.argv[1])
-    EVENT_N     = int(sys.argv[1])
+    EVENT_N     = int(sys.argv[2])
     main(PROGNAME,PHASE,EVENT_N)
     
