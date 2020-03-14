@@ -55,13 +55,13 @@ def OneD_histo(ax,variable, weight, fit_func, title, label0, xlabel, style, hist
 	fit_up = fit_func(variable_fit, *popt_up)
 	fit_dw = fit_func(variable_fit, *popt_dw)
 
+	ax.hist(variable, bins=bin, histtype=histtype, label=title,lw=1, weights=weight, color="k")  #histo distribution
 	ax.plot(variable_fit, fit_func(variable_fit, *popt), style, label = label0,linewidth = 1) #fitting curve
-	ax.hist(variable, bins=bin, histtype=histtype, lw=1, label=title, weights=weight, color="k")  #histo distribution
-	ax.fill_between(variable_fit, fit_up, fit_dw, alpha=0.25, color="b", label='$1\sigma$ interval')
+	ax.fill_between(variable_fit, fit_up, fit_dw, alpha=0.25, color="r", label='$1\sigma$ interval')
 	ax.set(xlabel=xlabel, ylabel="Candidates")
 	ax.xaxis.set_label_coords(0.8, -0.11,  transform=ax.transAxes)
 	ax.yaxis.set_label_coords(-0.12, 0.9, transform=ax.transAxes)
-	ax.legend(fontsize=13)
+	ax.legend(fontsize=13,frameon=False)
 
 def main (program,type,event,phase,event_n):
 	CM_data      = np.transpose(np.loadtxt('results_phase%.4f_%d/B0_CM_variables_factor%s%.1f_%d.txt'%(phase,event_n,type,event,event_n)))
@@ -83,10 +83,10 @@ def main (program,type,event,phase,event_n):
 	# B0_n_popt,      B0_n_err      ,_ =  Fitting(np.array(B0_n),      Gaussian, B0_weight_n,[1,1,1])
 	# B0_p_popt_conj, B0_p_err_conj ,_ =  Fitting(np.array(B0_p_conj), Gaussian, B0_weight_p_conj,[1,1,1])
 	# B0_n_popt_conj, B0_n_err_conj ,_ =  Fitting(np.array(B0_n_conj), Gaussian, B0_weight_n_conj,[1,1,1])
-	# OneD_histo(ax0_1,np.array(B0_p)/1000,      B0_weight_p,      Gaussian, "$B_0$ ($C_T>0$)",        "fit", "$m(D^0\\bar{D}^0K^+\pi^-)$", "b-", "step", [1,1,1])
-	# OneD_histo(ax0_2,np.array(B0_n)/1000,      B0_weight_n,      Gaussian, "$B_0$ ($C_T<0$)",        "fit", "$m(D^0\\bar{D}^0K^+\pi^-)$", "b-", "step", [1,1,1])
-	# OneD_histo(ax0_3,np.array(B0_p_conj)/1000, B0_weight_p_conj, Gaussian, "$\\bar{B}_0$ ($C_T>0$)", "fit", "$m(\\bar{D}^0D^0K^-\pi^+)$", "b-", "step", [1,1,1])
-	# OneD_histo(ax0_4,np.array(B0_n_conj)/1000, B0_weight_n_conj, Gaussian, "$\\bar{B}_0$ ($C_T<0$)", "fit", "$m(\\bar{D}^0D^0K^-\pi^+)$", "b-", "step", [1,1,1])
+	# OneD_histo(ax0_1,np.array(B0_p)/1000,      B0_weight_p,      Gaussian, "$B^0$ ($C_T>0$)",        "fit", "$m(D^0\\bar{D}^0K^+\pi^-)$", "b-", "step", [1,1,1])
+	# OneD_histo(ax0_2,np.array(B0_n)/1000,      B0_weight_n,      Gaussian, "$B^0$ ($C_T<0$)",        "fit", "$m(D^0\\bar{D}^0K^+\pi^-)$", "b-", "step", [1,1,1])
+	# OneD_histo(ax0_3,np.array(B0_p_conj)/1000, B0_weight_p_conj, Gaussian, "$\\bar{B}_0$ ($C^T>0$)", "fit", "$m(\\bar{D}^0D^0K^-\pi^+)$", "b-", "step", [1,1,1])
+	# OneD_histo(ax0_4,np.array(B0_n_conj)/1000, B0_weight_n_conj, Gaussian, "$\\bar{B}_0$ ($C^T<0$)", "fit", "$m(\\bar{D}^0D^0K^-\pi^+)$", "b-", "step", [1,1,1])
 	# f0.tight_layout()
 	# f0.savefig("invmass_B0_fit_factor%s%.1f_%d.png"%(event_n))
 
@@ -97,8 +97,8 @@ def main (program,type,event,phase,event_n):
 	mKpi_n_popt,      mKpi_n_err      ,_ =  Fitting(np.array(mKpi_n),      BreitWigner, np.ones(len(mKpi_n)),      p1_list,bin)
 	mKpi_p_popt_conj, mKpi_p_err_conj ,_ =  Fitting(np.array(mKpi_p_conj), BreitWigner, np.ones(len(mKpi_p_conj)), p1_list,bin)
 	mKpi_n_popt_conj, mKpi_n_err_conj ,_ =  Fitting(np.array(mKpi_n_conj), BreitWigner, np.ones(len(mKpi_n_conj)), p1_list,bin)
-	OneD_histo(ax1_1,np.array(mKpi_p),      np.ones(len(mKpi_p)),      BreitWigner, "$B_0$ ($C_T>0$)",        "BW fit", "$m(K^+\pi^-)[GeV/c^2]$", "b-", "step",p1_list,bin)
-	OneD_histo(ax1_2,np.array(mKpi_n),      np.ones(len(mKpi_n)),      BreitWigner, "$B_0$ ($C_T<0$)",        "BW fit", "$m(K^+\pi^-)[GeV/c^2]$", "b-", "step",p1_list,bin)
+	OneD_histo(ax1_1,np.array(mKpi_p),      np.ones(len(mKpi_p)),      BreitWigner, "$B^0$ ($C_T>0$)",        "BW fit", "$m(K^+\pi^-)[GeV/c^2]$", "b-", "step",p1_list,bin)
+	OneD_histo(ax1_2,np.array(mKpi_n),      np.ones(len(mKpi_n)),      BreitWigner, "$B^0$ ($C_T<0$)",        "BW fit", "$m(K^+\pi^-)[GeV/c^2]$", "b-", "step",p1_list,bin)
 	OneD_histo(ax1_3,np.array(mKpi_p_conj), np.ones(len(mKpi_p_conj)), BreitWigner, "$\\bar{B}_0$ ($C_T>0$)", "BW fit", "$m(K^-\pi^+)[GeV/c^2]$", "b-", "step",p1_list,bin)
 	OneD_histo(ax1_4,np.array(mKpi_n_conj), np.ones(len(mKpi_n_conj)), BreitWigner, "$\\bar{B}_0$ ($C_T<0$)", "BW fit", "$m(K^-\pi^+)[GeV/c^2]$", "b-", "step",p1_list,bin)
 	f1.tight_layout()
@@ -111,8 +111,8 @@ def main (program,type,event,phase,event_n):
 	mDDbar_n_popt,      mDDbar_n_err      ,_ =  Fitting(np.array(mDDbar_n),      BreitWigner3, np.ones(len(mDDbar_n)),     p2_list,bin)
 	mDDbar_p_popt_conj, mDDbar_p_err_conj ,_ =  Fitting(np.array(mDDbar_p_conj), BreitWigner3, np.ones(len(mDDbar_p_conj)),p2_list,bin)
 	mDDbar_n_popt_conj, mDDbar_n_err_conj ,_ =  Fitting(np.array(mDDbar_n_conj), BreitWigner3, np.ones(len(mDDbar_n_conj)),p2_list,bin)
-	OneD_histo(ax2_1,np.array(mDDbar_p),      np.ones(len(mDDbar_p)),      BreitWigner3, "$B_0$ ($C_T>0$)",        "BW fit", "$m(D^0\\bar{D}^0)[GeV/c^2]$", "b-", "step",p2_list,bin)
-	OneD_histo(ax2_2,np.array(mDDbar_n),      np.ones(len(mDDbar_n)),      BreitWigner3, "$B_0$ ($C_T<0$)",        "BW fit", "$m(D^0\\bar{D}^0)[GeV/c^2]$", "b-", "step",p2_list,bin)
+	OneD_histo(ax2_1,np.array(mDDbar_p),      np.ones(len(mDDbar_p)),      BreitWigner3, "$B^0$ ($C_T>0$)",        "BW fit", "$m(D^0\\bar{D}^0)[GeV/c^2]$", "b-", "step",p2_list,bin)
+	OneD_histo(ax2_2,np.array(mDDbar_n),      np.ones(len(mDDbar_n)),      BreitWigner3, "$B^0$ ($C_T<0$)",        "BW fit", "$m(D^0\\bar{D}^0)[GeV/c^2]$", "b-", "step",p2_list,bin)
 	OneD_histo(ax2_3,np.array(mDDbar_p_conj), np.ones(len(mDDbar_p_conj)), BreitWigner3, "$\\bar{B}_0$ ($C_T>0$)", "BW fit", "$m(\\bar{D}^0D^0)[GeV/c^2]$", "b-", "step",p2_list,bin)
 	OneD_histo(ax2_4,np.array(mDDbar_n_conj), np.ones(len(mDDbar_n_conj)), BreitWigner3, "$\\bar{B}_0$ ($C_T<0$)", "BW fit", "$m(\\bar{D}^0D^0)[GeV/c^2]$", "b-", "step",p2_list,bin)
 	f2.tight_layout()

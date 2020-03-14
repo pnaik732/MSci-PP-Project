@@ -32,15 +32,16 @@ def BW0 (M,Gamma,A,E):
     f = A * k/((E**2-M**2)**2+(M*Gamma)**2)
     return f
 
-def fit(left,right,color,M,Gamma):
+def fit(left,right,M,Gamma):
     fit = ROOT.TF1("f",BreitWigner(),left,right,3)
-    fit.SetLineColor(color)
     fit.SetParameters(M,Gamma,10)
+    fit.SetLineColor(ROOT.kBlue)
     return fit
 
 def fit1(left,right,M1,Gamma1,A1, M2,Gamma2,A2, M3,Gamma3,A3):
     fit = ROOT.TF1("f",BreitWigner1(),left,right,9)
     fit.SetParameters(M1,Gamma1,A1, M2,Gamma2,A2, M3,Gamma3,A3)
+    fit.SetLineColor(ROOT.kBlue)
     return fit
     
 ### generate plots and add data ###
@@ -105,14 +106,14 @@ def main(program,type,event,phase,event_n):
 	c00 = ROOT.TCanvas("c00", "Bbar0 decay invmass", 1420,710); c00.Divide(2,1) 
 	c00.cd(1); gPad.SetMargin(0.2,0.05,0.15,0.1)
 	h00_1 = pltini("h00_1",bin,mKpi,  '\ m(K^+\pi^-)\\;[GeV/c^2]',     ROOT.kBlack)
-	f00_1 = fit(min(mKpi),max(mKpi),4,0.89555,0.0473); h0_2.Fit(f0_2,"R+"); h00_1.Fit(f00_1,"R+")
+	f00_1 = fit(min(mKpi),max(mKpi),0.89555,0.0473); h0_2.Fit(f0_2,"R+"); h00_1.Fit(f00_1,"R+")
 	leg00_1 = ROOT.TLegend(0.6, 0.74, 0.89, 0.89); leg00_1.AddEntry(h00_1,"\ B^0 \\; data \\;(MC)", "lf"); leg00_1.AddEntry(f00_1,"\ BW \\; fit", "l"); legset(leg00_1)
 	h00_1.SetMaximum(1.8*h00_1.GetMaximum())
 	h00_1.Draw(); leg00_1.Draw() 
 
 	c00.cd(2); gPad.SetMargin(0.2,0.05,0.15,0.1)
 	h00_2 = pltini("h00_2",bin,mKpi_conj,  '\ m(K^-\pi^+)\\;[GeV/c^2]',     ROOT.kBlack)
-	f00_2 = fit(min(mKpi_conj),max(mKpi_conj),4,0.89555,0.0473); h00_2.Fit(f00_2,"R+")
+	f00_2 = fit(min(mKpi_conj),max(mKpi_conj),0.89555,0.0473); h00_2.Fit(f00_2,"R+")
 	leg00_2 = ROOT.TLegend(0.6, 0.74, 0.89, 0.89); leg00_2.AddEntry(h00_2,"\ \\bar{B}^0 \\; data \\;(MC)", "lf"); leg00_2.AddEntry(f00_2,"\ BW \\; fit", "l"); legset(leg00_2)
 	h00_2.SetMaximum(h00_1.GetMaximum())
 	h00_2.Draw(); leg00_2.Draw()

@@ -23,8 +23,8 @@ def main(program, type,event,phase,event_n):
 	err_a_cp = 0.5 * np.sqrt(err_A_T ** 2 + err_A_T_conj ** 2)
 	
 	with open('results_phase%.4f_%d/asymmetries_%d.txt'%(phase,event_n,event_n),mode='a') as f:
-		f.write("%.4f   %.1f    %d    %.2f%%   %.2f%%   %.2f%%   %.2f%%   %.2f%%   %.2f%%"%(
-		        phase,  event,    event_n, A_T*100, err_A_T*100, A_T_conj*100, err_A_T_conj*100, a_cp*100, err_a_cp*100))
+		f.write("%.4f   %.1f    %d    %.5f   %.5f   %.5f   %.5f   %.5f   %.5f"%(
+		        phase,  event,  event_n, A_T, err_A_T, A_T_conj, err_A_T_conj, a_cp, err_a_cp) + "\n")
 
 	
 if __name__ == '__main__':

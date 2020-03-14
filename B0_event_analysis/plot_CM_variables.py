@@ -15,30 +15,32 @@ def pltini(no,bin,data,xaxis,color):
 
 ### customise the front size and colour ###    
 def pltset (input, xaxis,color):
-  #function to set up the fontsize of the axis labels and titles.
-  gr = input
-  labelsize = 0.05
-  gr.SetStats(False)
-  gr.SetLineColor(color)
-  gr.GetXaxis().SetTitle(xaxis)
-  gr.GetYaxis().SetTitle('Candidates')
-  gr.GetXaxis().SetLabelFont(132)
-  gr.GetYaxis().SetLabelFont(132)
-  gr.GetXaxis().SetTitleFont(132)
-  gr.GetYaxis().SetTitleFont(132)
-  gr.GetXaxis().SetLabelSize(labelsize)
-  gr.GetXaxis().SetTitleSize(labelsize)
-  gr.GetYaxis().SetLabelSize(labelsize)
-  gr.GetYaxis().SetTitleSize(labelsize)
-  gr.SetMinimum(0)
+	#function to set up the fontsize of the axis labels and titles.
+	gr = input
+	labelsize = 0.05
+	gr.SetStats(False)
+	gr.SetLineColor(color)
+	if color == ROOT.kRed:
+		gr.SetLineStyle(2)
+	gr.GetXaxis().SetTitle(xaxis)
+	gr.GetYaxis().SetTitle('Candidates')
+	gr.GetXaxis().SetLabelFont(132)
+	gr.GetYaxis().SetLabelFont(132)
+	gr.GetXaxis().SetTitleFont(132)
+	gr.GetYaxis().SetTitleFont(132)
+	gr.GetXaxis().SetLabelSize(labelsize)
+	gr.GetXaxis().SetTitleSize(labelsize)
+	gr.GetYaxis().SetLabelSize(labelsize)
+	gr.GetYaxis().SetTitleSize(labelsize)
+	gr.SetMinimum(0)
 
 ### add legend to the plot ###
 def legset(input):
-    legend = input
-    size = 25
-    legend.SetTextFont(133)
-    legend.SetTextSize(size)
-    legend.SetLineColor(0)
+	legend = input
+	size = 25
+	legend.SetTextFont(133)
+	legend.SetTextSize(size)
+	legend.SetLineColor(0)
     
 def main(program,type,event,phase,event_n):
 	#0.phi, 1. mddbar, 2. mkpi, 3. costhetaddbar, 4. costhetakpi, 5.C_T

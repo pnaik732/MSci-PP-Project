@@ -181,6 +181,11 @@ def main (program,type,event,phase,event_n):
 					 Asy[i]      * 100, err_A[i]      * 100, 
 					 Asy_conj[i] * 100, err_A_conj[i] * 100,
 					 a_cp[i]     * 100, err_acp[i]    * 100) + "\n")
+	with open('results_phase%.4f_%d/phase_space_regions_asy_factor%s%.1f_%d.txt'%(phase,event_n,type,event,event_n),mode='a') as f:
+		f.write("integrated results:(%.2f +- %.2f)%%     (%.2f +- %.2f)%%     (%.2f +- %.2f)%%"%(
+					 np.sum(Asy)      * 100, np.sqrt(np.sum(err_A ** 2))      * 100, 
+					 np.sum(Asy_conj) * 100, np.sqrt(np.sum(err_A_conj ** 2)) * 100,
+					 np.sum(a_cp)     * 100, np.sqrt(np.sum(err_acp ** 2))    * 100) + "\n")
 
 	#fitting   
 	ps_region  = np.arange(1,33)
@@ -214,31 +219,30 @@ def main (program,type,event,phase,event_n):
 	#plot
 	fig, axs   = plt.subplots(1, 3, figsize=(15,5))
 	(ax1, ax2, ax3) = axs
-	fig.suptitle('Binned Analysis')
+	fig.suptitle('Binned Analysis',fontsize = 11)
 
 	ax1.errorbar(ps_region, Asy,      yerr=err_A,      fmt='ro' ,ms=4, capsize=2, lw=1)
 	ax2.errorbar(ps_region, Asy_conj, yerr=err_A_conj, fmt='ro', ms=4, capsize=2, lw=1)
 	ax3.errorbar(ps_region, a_cp,     yerr=err_acp,    fmt='ro', ms=4, capsize=2, lw=1)
-	ax1.set(xlabel='Phase-Space Region', ylabel="$A_T$")
-	ax2.set(xlabel='Phase-Space Region', ylabel="$\\bar{A}_T$")
-	ax3.set(xlabel='Phase-Space Region', ylabel="$\\mathcal{A}_{\\mathcal{C}\\mathcal{P}}$")
-	ax1.xaxis.set_label_coords(0.8, -0.11,  transform=ax1.transAxes)
-	ax2.xaxis.set_label_coords(0.8, -0.11,  transform=ax2.transAxes)
-	ax3.xaxis.set_label_coords(0.8, -0.11,  transform=ax3.transAxes)
-	ax1.yaxis.set_label_coords(-0.12, 0.95, transform=ax1.transAxes)
-	ax2.yaxis.set_label_coords(-0.12, 0.95, transform=ax2.transAxes)
-	ax3.yaxis.set_label_coords(-0.12, 0.95, transform=ax3.transAxes)
-	ax1.set_ylim([-0.42, 0.42])
-	ax2.set_ylim([-0.42, 0.42])
-	ax3.set_ylim([-0.11, 0.11])
-
+	ax1.set_xlabel('Phase-Space Region', fontsize = 11); ax1.set_ylabel("$A_T$", fontsize = 11)
+	ax2.set_xlabel('Phase-Space Region', fontsize = 11); ax2.set_ylabel("$\\bar{A}_T$", fontsize = 11)
+	ax3.set_xlabel('Phase-Space Region', fontsize = 11); ax3.set_ylabel("$\\mathcal{A}_{\\mathcal{C}\\mathcal{P}}$", fontsize = 11)
+	ax1.set_ylim([-1.2*max(Asy),      1.2*max(Asy)])
+	ax2.set_ylim([-1.2*max(Asy_conj), 1.2*max(Asy_conj)])
+	ax3.set_ylim([-5*max(a_cp),       5*max(a_cp)])
+	for ax in fig.get_axes():
+		ax.xaxis.set_label_coords(0.8, -0.11,  transform=ax.transAxes)
+		ax.yaxis.set_label_coords(-0.12, 0.95, transform=ax.transAxes)
+		ax.tick_params(axis='both', labelsize = 11) 
 	ax3.plot(ps_region, fit,         'b-', lw=2, label='best fit curve')
-	ax3.plot(ps_region, np.zeros(32),'k--',lw=1, label='true curve')
+	ax3.plot(ps_region, np.zeros(32),'k--',lw=1, label='$\\mathcal{C}\\mathcal{P}$-conserved curve')
 	ax3.fill_between(ps_region, fit_up, fit_dw, alpha=0.25, label='$5\sigma$ interval')
 
-	ax3.legend(loc='lower right', fontsize=12)
-	ax3.text(0.01, 0.95, "No CPV: ${\chi}^2$=%.2f, p-value = %.1f%%"                     %(chi2,    p_value*100),     transform=ax3.transAxes)
-	ax3.text(0.01, 0.88, "Fitted: $\;\;\;$${\chi}^2$=%.2f, p-value = %.1f%%"             %(chi2_fit,p_value_fit*100), transform=ax3.transAxes)
+	ax3.legend(loc='lower right', fontsize = 11)
+	ax3.text(0.01, 0.95, "${\chi}^2$/ndf=%.2f/32, p-value = %.1f%%" %(chi2,    p_value*100),     transform=ax3.transAxes, fontsize = 11)
+	#ax3.text(0.01, 0.85, "${\chi}^2$/ndf=%.2f/32, \n p-value = %.1f%%" %(chi2,    p_value*100),     transform=ax3.transAxes, fontsize = 11)
+
+	ax3.text(0.01, 0.88, "Fitting: $\;\;\;$${\chi}^2$/ndf=%.2f/32, p-value = %.1f%%"             %(chi2_fit,p_value_fit*100), transform=ax3.transAxes)
 	ax3.text(0.2,  0.84, "($\\mathcal{A}_{\\mathcal{C}\\mathcal{P}}$ = %.4f $\pm$ %.4f)" %(popt[0], perr[0]),         transform=ax3.transAxes)
 
 	fig.tight_layout(rect=[0, 0.03, 1, 0.95])
