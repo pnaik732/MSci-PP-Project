@@ -19,7 +19,9 @@ import numpy as np
 
 def run_cmd(cmd):
   process = subprocess.Popen(cmd.split(), stdout = subprocess.PIPE)
-  process.communicate()
+  #process.communicate()
+  stdout = process.communicate()[0]
+  print ('STDOUT:{}'.format(stdout))
   process.stdout.close()
   return " "
 
@@ -45,7 +47,7 @@ event_type        = "spd_1E"
 array_tot     = np.arange(0,1)  
 array_phase   = np.arange(0,1)
 
-event_n = 171300        #total event number generated
+event_n = 100000        #total event number generated
 event_n_generator = int(event_n/num_seed_in_a_set)
 #=========================================================================================
 
@@ -66,14 +68,14 @@ for p in array_phase:
 	run_cmd("mkdir results_phase%.4f_%d"%(p,event_n))
 	for i in array_tot:
 		print(p,i)
-		# run_cmd("python CM_variables.py %s %.1f %.4f %d"        % (event_type,i,p,event_n)); print("calculate CM variables: done")
+# 		run_cmd("python CM_variables.py %s %.1f %.4f %d"        % (event_type,i,p,event_n)); print("calculate CM variables: done")
 # 		run_cmd("python CM_variables_conj.py %s %.1f %.4f %d"   % (event_type,i,p,event_n)); print("calculate CM variables_conj: done")
 # 		run_cmd("python plot_CM_variables.py %s %.1f %.4f %d"   % (event_type,i,p,event_n)); print("plot CM variables: done")
-		run_cmd("python plot_fit_matplotlib.py %s %.1f %.4f %d" % (event_type,i,p,event_n)); print("fit invariant mass (matplotlib): done")
-		run_cmd("python plot_fit_ROOT.py %s %.1f %.4f %d"       % (event_type,i,p,event_n)); print("fit invariant mass (ROOT): done")
+# 		run_cmd("python plot_fit_matplotlib.py %s %.1f %.4f %d" % (event_type,i,p,event_n)); print("fit invariant mass (matplotlib): done")
+# 		run_cmd("python plot_fit_ROOT.py %s %.1f %.4f %d"       % (event_type,i,p,event_n)); print("fit invariant mass (ROOT): done")
 # 		run_cmd("python asymmetries.py %s %.1f %.4f %d"         % (event_type,i,p,event_n)); print("find asymmetries: done")
-# 		run_cmd("python binned_analysis.py %s %.1f %.4f %d"     % (event_type,i,p,event_n)); print("binned analysis: done")
-		#uncommand for multiple phases
-		#run_cmd("python plot_phase.py %.4f %d"                  % (p,event_n));              print("phase varying plots: done")
-		#uncommand for multiple event numbers
-		#run_cmd("python plot_event.py %.4f %.1f %s %d"          % (p,f,event_type,event_n)); print("event number varying plots: done")
+		run_cmd("python binned_analysis.py %s %.1f %.4f %d"     % (event_type,i,p,event_n)); print("binned analysis: done")
+# 		#uncommand for multiple phases
+# 		run_cmd("python plot_phase.py %.4f %d"                  % (p,event_n));              print("phase varying plots: done")
+# 		#uncommand for multiple event numbers
+# 		run_cmd("python plot_event.py %.4f %.1f %s %d"          % (p,f,event_type,event_n)); print("event number varying plots: done")

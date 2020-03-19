@@ -95,19 +95,19 @@ def find_c_t(bin_data,data,i_list,phase,type,event,event_n):
 	mask_x3_list, x3_patches_order = binning_events(x3, x3_patches_list, 4)
 	mask_x4_list, x4_patches_order = binning_events(x4, x4_patches_list, 8)
 	mask_x5_list, x5_patches_order = binning_events(x5, x5_patches_list, 16)
-    #print the bin orientation
+	#print the bin orientation
 	c_p_list = []
 	c_n_list = []
 	i1,i2,i3,i4,i5 = i_list[0],i_list[1],i_list[2],i_list[3],i_list[4]
 	for i in range (len(i1)):
-	    with open('results_phase%.4f_%d/phase_space_regions_bin_factor%s%.1f_%d.txt'%(phase,event_n,type,event,event_n),mode='a') as f:
-	        f.write("(%.2f,%.2f)   (%.2f,%.2f)   (%.2f,%.2f)   (%.2f,%.2f)   (%.2f,%.2f)"%(
-	                    x1_patches_order[int(i1[i])][0], x1_patches_order[int(i1[i])][1],
-	                    x2_patches_order[int(i2[i])][0], x2_patches_order[int(i2[i])][1],
-	                    x3_patches_order[int(i3[i])][0], x3_patches_order[int(i3[i])][1],
-	                    x4_patches_order[int(i4[i])][0], x4_patches_order[int(i4[i])][1],
-	                    x5_patches_order[int(i5[i])][0], x5_patches_order[int(i5[i])][1]) + "\n")
-	    # find the events included in all the five bins
+		with open('results_phase%.4f_%d/phase_space_regions_bin_factor%s%.1f_%d.txt'%(phase,event_n,type,event,event_n),mode='a') as f:
+			f.write("%d    (%.2f,%.2f)   (%.2f,%.2f)   (%.2f,%.2f)   (%.2f,%.2f)   (%.2f,%.2f)"%(i+1,
+						x1_patches_order[int(i1[i])][0], x1_patches_order[int(i1[i])][1],
+						x2_patches_order[int(i2[i])][0], x2_patches_order[int(i2[i])][1],
+						x3_patches_order[int(i3[i])][0], x3_patches_order[int(i3[i])][1],
+						x4_patches_order[int(i4[i])][0], x4_patches_order[int(i4[i])][1],
+						x5_patches_order[int(i5[i])][0], x5_patches_order[int(i5[i])][1]) + "\n")
+		# find the events included in all the five bins
 		mask_p = mask_x1_list[int(i1[i])] & mask_x2_list[int(i2[i])] & mask_x3_list[int(i3[i])] & mask_x4_list[int(i4[i])] & mask_x5_list[int(i5[i])] & (x6 > 0) #C_T>0
 		mask_n = mask_x1_list[int(i1[i])] & mask_x2_list[int(i2[i])] & mask_x3_list[int(i3[i])] & mask_x4_list[int(i4[i])] & mask_x5_list[int(i5[i])] & (x6 < 0) #C_T<0
 		# apply the event index to C_T
@@ -126,7 +126,7 @@ def find_a_t(c_p_list,c_n_list):
 	return Asy,err_A
 	
 def line(x, b):
-    return 0 * x +b
+	return 0 * x +b
 
 def main (program,type,event,phase,event_n):
 	data      = np.loadtxt('results_phase%.4f_%d/B0_CM_variables_factor%s%.1f_%d.txt'%(phase,event_n,type,event,event_n))
@@ -138,36 +138,37 @@ def main (program,type,event,phase,event_n):
 	i3 = [0,1,2,3,4,5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0,1,2,3,4,5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
 	i4 = [0,2,4,6,8,10,12,14,1, 3, 5, 7, 9, 11,13,15,0,2,4,6,8,10,12,14,1, 3, 5, 7, 9, 11,13,15]
 	i5 = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,1,3,5,7,9,11,13,15,17,19,21,23,25,26,29,31]
- 
-	# i1 = [0,0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]    #Shyam
-	# i2 = [0,0,0,0,0,0,0,0,1,1,1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3]
-	# i3 = [0,0,0,0,1,1,1,1,2,2,2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7]
-	# i4 = [0,0,1,1,2,2,3,3,4,4,5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10,10,11,11,12,12,13,13,14,14,15,15]
-	# i5 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
-	#  
-	# i1 = [0,1,0,1,0,1,0,1,0,1,0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-	# i2 = [0,1,2,3,0,1,2,3,0,1,2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
-	# i3 = [0,1,2,3,4,5,6,7,0,1,2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
-	# i4 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15]
-	# i5 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
-	#  
-	# i1 = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]
-	# i2 = [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3]
-	# i3 = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7]
-	# i4 = [0,2,4,6,8,10,12,14,1, 3, 5, 7, 9, 11,13,15,0,2,4,6,8,10,12,14,1, 3, 5, 7, 9, 11,13,15]
-	# i5 = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,1,3,5,7,9,11,13,15,17,19,21,23,25,26,29,31]
+
+# 	i1 = [0,0,0,0,0,0,0,0,0,0,0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]    #Shyam
+# 	i2 = [0,0,0,0,0,0,0,0,1,1,1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3]
+# 	i3 = [0,0,0,0,1,1,1,1,2,2,2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7]
+# 	i4 = [0,0,1,1,2,2,3,3,4,4,5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10,10,11,11,12,12,13,13,14,14,15,15]
+# 	i5 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+# 	#  
+# 	i1 = [0,1,0,1,0,1,0,1,0,1,0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+# 	i2 = [0,1,2,3,0,1,2,3,0,1,2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3]
+# 	i3 = [0,1,2,3,4,5,6,7,0,1,2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7]
+# 	i4 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12,13,14,15]
+# 	i5 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]
+# 	 
+# 	i1 = [0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]
+# 	i2 = [0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3]
+# 	i3 = [0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7]
+# 	i4 = [0,2,4,6,8,10,12,14,1, 3, 5, 7, 9, 11,13,15,0,2,4,6,8,10,12,14,1, 3, 5, 7, 9, 11,13,15]
+# 	i5 = [0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,1,3,5,7,9,11,13,15,17,19,21,23,25,26,29,31]
 
 	i_list = [i1,i2,i3,i4,i5]
 	c_p_list,c_n_list = find_c_t(data,data,i_list,phase,type,event,event_n)
 	c_p_list_conj,c_n_list_conj = find_c_t(data,data_conj,i_list,phase,type,event,event_n)
+		
 	# print(len(c_p_list))    #number of ps regions
 	# print(len(c_n_list))
 	# print([len(x) for x in c_p_list])   #number of C_T > 0 in each region
 	# print([len(x) for x in c_n_list])   #number of C_T < 0 in each region
-	# print([len(x) for x in c_p_list]+[len(x) for x in c_n_list])
+	print([len(x) for x in c_p_list]+[len(x) for x in c_n_list])
 	# print(np.sum([len(x) for x in c_p_list])) #total number of C_T > 0
 	# print(np.sum([len(x) for x in c_n_list])) #total number of C_T < 0
-	# print(np.sum([len(x) for x in c_p_list])+np.sum([len(x) for x in c_n_list])) #total number of C_T
+	print(np.sum([len(x) for x in c_p_list])+np.sum([len(x) for x in c_n_list])) #total number of C_T
 
 	#calculation
 	Asy,      err_A      = find_a_t (c_p_list,      c_n_list)
@@ -227,9 +228,14 @@ def main (program,type,event,phase,event_n):
 	ax1.set_xlabel('Phase-Space Region', fontsize = 11); ax1.set_ylabel("$A_T$", fontsize = 11)
 	ax2.set_xlabel('Phase-Space Region', fontsize = 11); ax2.set_ylabel("$\\bar{A}_T$", fontsize = 11)
 	ax3.set_xlabel('Phase-Space Region', fontsize = 11); ax3.set_ylabel("$\\mathcal{A}_{\\mathcal{C}\\mathcal{P}}$", fontsize = 11)
-	ax1.set_ylim([-1.2*max(Asy),      1.2*max(Asy)])
-	ax2.set_ylim([-1.2*max(Asy_conj), 1.2*max(Asy_conj)])
-	ax3.set_ylim([-5*max(a_cp),       5*max(a_cp)])
+	if max(Asy)>max(Asy_conj):
+		ax1.set_ylim([-1.2*max(Asy), 1.2*max(Asy)])
+		ax2.set_ylim([-1.2*max(Asy), 1.2*max(Asy)])
+		ax3.set_ylim([-1.2*max(Asy), 1.2*max(Asy)])
+	elif max(Asy)<max(Asy_conj):
+		ax1.set_ylim([-1.2*max(Asy_conj), 1.2*max(Asy_conj)])
+		ax2.set_ylim([-1.2*max(Asy_conj), 1.2*max(Asy_conj)])
+		ax3.set_ylim([-1.2*max(Asy_conj), 1.2*max(Asy_conj)])
 	for ax in fig.get_axes():
 		ax.xaxis.set_label_coords(0.8, -0.11,  transform=ax.transAxes)
 		ax.yaxis.set_label_coords(-0.12, 0.95, transform=ax.transAxes)

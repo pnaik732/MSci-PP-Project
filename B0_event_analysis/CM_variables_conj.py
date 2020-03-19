@@ -1,8 +1,10 @@
 import numpy as np
-import uproot 
 import pandas as pd
-from rootpy.vector import Vector2, Vector3, LorentzVector, Rotation, LorentzRotation
+import ROOT
+#from rootpy.vector import Vector2, Vector3, LorentzVector, Rotation, LorentzRotation
 import sys
+
+
 
 ### find the triple product in the rest frame of mother particle###
 def tripleproduct(particleA1,particleA2,particleB):
@@ -37,13 +39,13 @@ def planeangle(particleA1,particleA2,particleB1,particleB2,motherparticle):
    
 #========================== MAIN BODY
 def main (program,type,event,phase,event_n):
-	df=pd.read_table("output_phase%.4f_%d/B0toDDbar0K+pi-_factor%s%.1f_%d_conj.txt"%(phase,event_n,type,event,event_n),sep="\s+")
+	df=pd.read_csv("output_phase%.4f_%d/B0toDDbar0K+pi-_factor%s%.1f_%d_conj.txt"%(phase,event_n,type,event,event_n),sep="\s+")
 	for i in range (len(df.index)):
 		#extract database to form four-vectors (px,py,pz,E)
-		locals()['D0_lv_%d'      % (i)] = LorentzVector(-df._1_D0_Px[i],    -df._1_D0_Py[i],    -df._1_D0_Pz[i],    df._1_D0_E[i])
-		locals()['Dbar0_lv_%d'   % (i)] = LorentzVector(-df._2_Dbar0_Px[i], -df._2_Dbar0_Py[i], -df._2_Dbar0_Pz[i], df._2_Dbar0_E[i])
-		locals()['Kplus_lv_%d'   % (i)] = LorentzVector(-df._3_Kp_Px[i],    -df._3_Kp_Py[i],    -df._3_Kp_Pz[i],    df._3_Kp_E[i])
-		locals()['Piminus_lv_%d' % (i)] = LorentzVector(-df._4_pim_Px[i],   -df._4_pim_Py[i],   -df._4_pim_Pz[i],   df._4_pim_E[i])
+		locals()['D0_lv_%d'      % (i)] = ROOT.TLorentzVector(-df._1_D0_Px[i],    -df._1_D0_Py[i],    -df._1_D0_Pz[i],    df._1_D0_E[i])
+		locals()['Dbar0_lv_%d'   % (i)] = ROOT.TLorentzVector(-df._2_Dbar0_Px[i], -df._2_Dbar0_Py[i], -df._2_Dbar0_Pz[i], df._2_Dbar0_E[i])
+		locals()['Kplus_lv_%d'   % (i)] = ROOT.TLorentzVector(-df._3_Kp_Px[i],    -df._3_Kp_Py[i],    -df._3_Kp_Pz[i],    df._3_Kp_E[i])
+		locals()['Piminus_lv_%d' % (i)] = ROOT.TLorentzVector(-df._4_pim_Px[i],   -df._4_pim_Py[i],   -df._4_pim_Pz[i],   df._4_pim_E[i])
 	
 		#the sum of the four-momentum of the daughter-pair
 		locals()['momD0Dbar0_%d' % (i)]      = locals()['D0_lv_%d'    % (i)] + locals()['Dbar0_lv_%d'   % (i)]
