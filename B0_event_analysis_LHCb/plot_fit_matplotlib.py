@@ -14,20 +14,6 @@ def BreitWigner (E, A, M, Gamma):
     k = (2**1.8*M*Gamma*gamma)/(np.pi*(M**2+gamma)**0.5)
     f = A * k/((E**2-M**2)**2+(M*Gamma)**2)
     return f
-    
-def BreitWigner3 (E, A1, M1, Gamma1,A2, M2, Gamma2,A3, M3, Gamma3):
-    f1 = BreitWigner (E, A1, M1, Gamma1)
-    f2 = BreitWigner (E, A2, M2, Gamma2)
-    f3 = BreitWigner (E, A3, M3, Gamma3)
-    f = f1 + f2 + f3
-    return f
-
-def Gaussian3 (x, A1, mean1, sigma1,A2, mean2, sigma2,A3, mean3, sigma3):
-    f1 = Gaussian (x, A1, mean1, sigma1)
-    f2 = Gaussian (x, A2, mean2, sigma2)
-    f3 = Gaussian (x, A3, mean3, sigma3)
-    f = f1 + f2 + f3
-    return f
 
 def Fitting(variable, fit_func, weight, p0_list,bin):
     '''Fit the distribution with its analytic function, gives the fitting constant, used in Task1 and Task2.'''
@@ -99,10 +85,15 @@ def main (program,name):
 	f0,axs0 = plt.subplots(2,2,figsize=(9,8))
 	p0_list = [1,1,1]
 	(ax0_1, ax0_2), (ax0_3, ax0_4) = axs0
-	mB0_p_height,      mB0_p_popt,      mB0_p_err      ,_ =  Fitting(np.array(mB0_p),      Gaussian, sWeight_p,      p0_list,bin)
-	mB0_n_height,      mB0_n_popt,      mB0_n_err      ,_ =  Fitting(np.array(mB0_n),      Gaussian, sWeight_n,      p0_list,bin)
-	mB0_p_height_conj, mB0_p_popt_conj, mB0_p_err_conj ,_ =  Fitting(np.array(mB0_p_conj), Gaussian, sWeight_p_conj, p0_list,bin)
-	mB0_n_height_conj, mB0_n_popt_conj, mB0_n_err_conj ,_ =  Fitting(np.array(mB0_n_conj), Gaussian, sWeight_n_conj, p0_list,bin)
+	if name ==  "run1ADDrun2_new_BW":
+		function = BreitWigner ; fit_label = "fit (BW)"
+	else:
+		function = Gaussian;     fit_label = "fit (Gaussian)"
+	
+	mB0_p_height,      mB0_p_popt,      mB0_p_err      ,_ =  Fitting(np.array(mB0_p),      function, sWeight_p,      p0_list,bin)
+	mB0_n_height,      mB0_n_popt,      mB0_n_err      ,_ =  Fitting(np.array(mB0_n),      function, sWeight_n,      p0_list,bin)
+	mB0_p_height_conj, mB0_p_popt_conj, mB0_p_err_conj ,_ =  Fitting(np.array(mB0_p_conj), function, sWeight_p_conj, p0_list,bin)
+	mB0_n_height_conj, mB0_n_popt_conj, mB0_n_err_conj ,_ =  Fitting(np.array(mB0_n_conj), function, sWeight_n_conj, p0_list,bin)
 
 	mB0_p_yield,       mB0_p_err1_yield,      mB0_p_err2_yield      = find_yield(mB0_p,      mB0_p_popt,      mB0_p_err,      bin)
 	mB0_n_yield,       mB0_n_err1_yield,      mB0_n_err2_yield      = find_yield(mB0_n,      mB0_n_popt,      mB0_n_err,      bin)
@@ -121,37 +112,48 @@ def main (program,name):
 	a_cp_weights     = 0.5 * (A_T_weights - A_T_weights_conj)
 	a_cp_weights_err = 0.5 * np.sqrt(A_T_weights_err ** 2 + A_T_weights_err_conj ** 2)
 	
-	OneD_histo(ax0_1,np.array(mB0_p),      sWeight_p,      Gaussian, "$B^0$ ($C_T>0$)",                "fit", "$m(D^0\\bar{D}^0K^+\pi^-)$", "b-", "step", p0_list,bin)
-	OneD_histo(ax0_2,np.array(mB0_n),      sWeight_n,      Gaussian, "$B^0$ ($C_T<0$)",                "fit", "$m(D^0\\bar{D}^0K^+\pi^-)$", "b-", "step", p0_list,bin)
-	OneD_histo(ax0_3,np.array(mB0_p_conj), sWeight_p_conj, Gaussian, "$\\bar{B}^0$ ($-\\bar{C}_T>0$)", "fit", "$m(\\bar{D}^0D^0K^-\pi^+)$", "b-", "step", p0_list,bin)
-	OneD_histo(ax0_4,np.array(mB0_n_conj), sWeight_n_conj, Gaussian, "$\\bar{B}^0$ ($-\\bar{C}_T<0$)", "fit", "$m(\\bar{D}^0D^0K^-\pi^+)$", "b-", "step", p0_list,bin)
+	OneD_histo(ax0_1,np.array(mB0_p),      sWeight_p,      function, "$B^0$ ($C_T>0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin)
+	OneD_histo(ax0_2,np.array(mB0_n),      sWeight_n,      function, "$B^0$ ($C_T<0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin)
+	OneD_histo(ax0_3,np.array(mB0_p_conj), sWeight_p_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T>0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin)
+	OneD_histo(ax0_4,np.array(mB0_n_conj), sWeight_n_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T<0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin)
 	
-	plt.setp(axs0, xlim=(min(mB0_p),max(mB0_p)), ylim=(0,2*max(mB0_p_height)))
+	mB0_all_min        = [min(mB0_p),         min(mB0_n),        min(mB0_p_conj),        min(mB0_n_conj)]
+	mB0_all_max        = [max(mB0_p),         max(mB0_n),        max(mB0_p_conj),        max(mB0_n_conj)]
+	mB0_all_height_max = [max(mB0_p_height),  max(mB0_n_height), max(mB0_p_height_conj), max(mB0_n_height_conj)]
+
+	plt.setp(axs0, xlim=(min(mB0_all_min),max(mB0_all_max)), ylim=(0,1.3*max(mB0_all_height_max)))
 	f0.tight_layout()
 	f0.savefig("results_%s/invmass_B0_fit_tp.png"%(name))
 	
 	event_n_weight = np.sum(mB0_p_height)+np.sum(mB0_n_height)+np.sum(mB0_p_height_conj)+np.sum(mB0_n_height_conj)
-	print("total number of data after weight:", event_n_weight,np.sum(mB0_p_height),np.sum(mB0_n_height),np.sum(mB0_p_height_conj),np.sum(mB0_n_height_conj))
+	print("total number of data after weight:", event_n_weight,"=",np.sum(mB0_p_height),"+",np.sum(mB0_n_height),"+",np.sum(mB0_p_height_conj),"+",np.sum(mB0_n_height_conj))
 	print("weights", np.sum(sWeight_p),np.sum(sWeight_n),np.sum(sWeight_p_conj),np.sum(sWeight_n_conj))
 	with open('results_%s/invmass_fit_tp_parameters.txt'%(name),mode='a') as f:
 		f.write("bin=%d"%(bin)+ "\n")
-		f.write("    A err_A mean err_mean sigma err_sigma type" +"\n")
-		f.write("%s %.4f %.4f %.4f %.4f %.4f %.4f %s" % ("B0",       mB0_p_popt[0],        mB0_p_err[0],      mB0_p_popt[1],        mB0_p_err[1],         mB0_p_popt[2],        mB0_p_err[2],        "B0(C_T>0)")    + "\n")
-		f.write("%s %.4f %.4f %.4f %.4f %.4f %.4f %s" % ("B0",       mB0_n_popt[0],        mB0_n_err[0],      mB0_n_popt[1],        mB0_n_err[1],         mB0_n_popt[2],        mB0_n_err[2],        "B0(C_T<0)")    + "\n")
-		f.write("%s %.4f %.4f %.4f %.4f %.4f %.4f %s" % ("B0",       mB0_p_popt_conj[0],   mB0_p_err_conj[0], mB0_p_popt_conj[1],   mB0_p_err_conj[1],    mB0_p_popt_conj[2],   mB0_p_err_conj[2],   "Bbar0(-C_T>0)") + "\n")
-		f.write("%s %.4f %.4f %.4f %.4f %.4f %.4f %s" % ("B0",       mB0_n_popt_conj[0],   mB0_n_err_conj[0], mB0_n_popt_conj[1],   mB0_n_err_conj[1],    mB0_n_popt_conj[2],   mB0_n_err_conj[2],   "Bbar0(-C_T<0)") + "\n")
+		f.write("    A      err_A    mean   err_mean sigma  err_sigma type" +"\n")
+		f.write("%s %.4f  %.4f  %.4f  %.4f   %.4f  %.4f    %s" % ("B0",       mB0_p_popt[0],        mB0_p_err[0],      mB0_p_popt[1],        mB0_p_err[1],         mB0_p_popt[2],        mB0_p_err[2],        "B0(C_T>0)")    + "\n")
+		f.write("%s %.4f  %.4f  %.4f  %.4f   %.4f  %.4f    %s" % ("B0",       mB0_n_popt[0],        mB0_n_err[0],      mB0_n_popt[1],        mB0_n_err[1],         mB0_n_popt[2],        mB0_n_err[2],        "B0(C_T<0)")    + "\n")
+		f.write("%s %.4f  %.4f  %.4f  %.4f   %.4f  %.4f    %s" % ("B0",       mB0_p_popt_conj[0],   mB0_p_err_conj[0], mB0_p_popt_conj[1],   mB0_p_err_conj[1],    mB0_p_popt_conj[2],   mB0_p_err_conj[2],   "Bbar0(-C_T>0)") + "\n")
+		f.write("%s %.4f  %.4f  %.4f  %.4f   %.4f  %.4f    %s" % ("B0",       mB0_n_popt_conj[0],   mB0_n_err_conj[0], mB0_n_popt_conj[1],   mB0_n_err_conj[1],    mB0_n_popt_conj[2],   mB0_n_err_conj[2],   "Bbar0(-C_T<0)") + "\n")
+		f.write("\n"+"=========================== Method 1 (from fittings) =================================="+"\n")
 		f.write("\n"+"yields"+ "\n")
-		f.write("events    eta    err_self    err_fit" + "\n")
-		f.write("%s   %.4f   %.4f   %.4f"%("(C_T>0)",     mB0_p_yield,       mB0_p_err1_yield,      mB0_p_err2_yield)+ "\n")
-		f.write("%s   %.4f   %.4f   %.4f"%("(C_T<0)",     mB0_n_yield,       mB0_n_err1_yield,      mB0_n_err2_yield)+ "\n")
-		f.write("%s   %.4f   %.4f   %.4f"%("(-Cbar_T>0)", mB0_p_yield_conj,  mB0_p_err1_yield_conj, mB0_p_err2_yield_conj)+ "\n")
-		f.write("%s   %.4f   %.4f   %.4f"%("(-Cbar_T<0)", mB0_n_yield_conj,  mB0_n_err1_yield_conj, mB0_n_err2_yield_conj)+ "\n")
+		f.write("events             eta           err_self     err_fit" + "\n")
+		f.write("%s          %.4f          %.4f      %.4f"%("(C_T>0)",     mB0_p_yield,       mB0_p_err1_yield,      mB0_p_err2_yield)+ "\n")
+		f.write("%s          %.4f          %.4f      %.4f"%("(C_T<0)",     mB0_n_yield,       mB0_n_err1_yield,      mB0_n_err2_yield)+ "\n")
+		f.write("%s      %.4f          %.4f      %.4f"%("(-Cbar_T>0)", mB0_p_yield_conj,  mB0_p_err1_yield_conj, mB0_p_err2_yield_conj)+ "\n")
+		f.write("%s      %.4f          %.4f      %.4f"%("(-Cbar_T<0)", mB0_n_yield_conj,  mB0_n_err1_yield_conj, mB0_n_err2_yield_conj)+ "\n")
 		f.write("\n"+"Asymmetries"+"\n")
-		f.write("A_T    errA_T  A_T_conj   errA_T_conj   a_cp  err_a_cp"+ "\n")
-		f.write("%.4f   %.4f   %.4f   %.4f   %.4f   %.4f"%(A_T,      A_T_err,A_T_conj, A_T_err_conj,a_cp,a_cp_err)+ "\n")
+		f.write("A_T       errA_T    A_T_conj errA_T_conj   a_cp     err_a_cp"+ "\n")
+		f.write("%.4f   %.4f   %.4f   %.4f       %.4f   %.4f"%(A_T,      A_T_err,A_T_conj, A_T_err_conj,a_cp,a_cp_err)+ "\n")
+		f.write("\n"+"=========================== Method 2 (from weights) =================================="+"\n")
+		f.write("\n" + "events      eta(weights)    err_self(weights) " + "\n")
+		f.write("%s      %.4f         %.4f"%("(C_T>0)",     np.sum(sWeight_p),    np.sqrt(np.sum(sWeight_p)))+ "\n")
+		f.write("%s      %.4f         %.4f"%("(C_T<0)",     np.sum(sWeight_n),    np.sqrt(np.sum(sWeight_n)))+ "\n")
+		f.write("%s  %.4f         %.4f"%("(-Cbar_T>0)", np.sum(sWeight_p_conj),    np.sqrt(np.sum(sWeight_p_conj)))+ "\n")
+		f.write("%s  %.4f         %.4f"%("(-Cbar_T<0)", np.sum(sWeight_n_conj),    np.sqrt(np.sum(sWeight_n_conj)))+ "\n")
 		f.write("\n"+"Asymmetries (using weights)"+"\n")
-		f.write("A_T    errA_T  A_T_conj   errA_T_conj   a_cp  err_a_cp"+ "\n")
-		f.write("%.4f   %.4f   %.4f   %.4f   %.4f   %.4f"%(A_T_weights,      A_T_weights_err, A_T_weights_conj, A_T_weights_err_conj,a_cp_weights,a_cp_weights_err)+ "\n")
+		f.write("A_T       errA_T    A_T_conj errA_T_conj   a_cp     err_a_cp"+ "\n")
+		f.write("%.4f   %.4f   %.4f   %.4f       %.4f   %.4f"%(A_T_weights,      A_T_weights_err, A_T_weights_conj, A_T_weights_err_conj,a_cp_weights,a_cp_weights_err)+ "\n")
 
 	
 if __name__ == '__main__':
