@@ -10,7 +10,9 @@ git clone http://github.com/tz16559/MSci-PP-Project/ --recursive
 ```
 ### pre-requirements
 Get ROOT, uproot, scipy, numpy, pandas, matplotlib, subprocess installed
+
 Get AmpGen installed
+
 Get python3
 
 ## How to use the code
@@ -51,6 +53,7 @@ Note the root file generated in the results directory is used for amplitude anal
 
 ### Amplitude analysis  - LHCb data
 Copy B0_amplitude_plot to AmpGen/build/bin/
+
 Go to B0_amplitude_plot, run the SignalOnltFitter and plot the graph by typing
 ```
 python run_compare.py
