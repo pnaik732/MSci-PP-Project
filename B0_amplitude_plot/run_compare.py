@@ -17,10 +17,10 @@ def trim_axs(axs, N):
         ax.remove()
     return axs[:N]
 
-# decay_model = "B0toDDbar0K+pi-_spd.opt"
-# data_file   = "Event_nondup.root"
+decay_model = "B0toDDbar0K+pi-_spd.opt"
+data_file   = "Event.root"
 output_file = "Event_output_nondup_conj.root"
-# run_cmd("../SignalOnlyFitter %s --DataSample %s --Plots %s"%(decay_model,data_file,output_file))
+run_cmd("../SignalOnlyFitter %s --DataSample %s --Plots %s"%(decay_model,data_file,output_file))
 
 
 
