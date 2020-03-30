@@ -8,12 +8,13 @@ Clone with git
 ```
 git clone http://github.com/tz16559/MSci-PP-Project/ --recursive
 ```
-### pre-requirements
-Get ROOT, uproot, scipy, numpy, pandas, matplotlib, subprocess installed
+### Pre-requirements
 
-Get AmpGen installed
+Get AmpGen (version 1.2) installed
 
 Get python3
+
+Get ROOT, uproot, scipy, numpy, pandas, matplotlib, subprocess installed
 
 ## How to use the code
 
