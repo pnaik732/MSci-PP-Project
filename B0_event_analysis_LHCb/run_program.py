@@ -21,13 +21,13 @@ def run_cmd(cmd):
   print ('STDOUT:{}'.format(stdout))
   process.stdout.close()
 
-data01 = "data_old/Data_sig_tos_weights-Run1"; opt_cut0 = 0.9979
-data02 = "data_old/Data_sig_tos_weights-Run2"; opt_cut0 = 0.9979
+# data01 = "data_old/Data_sig_tos_weights-Run1"; opt_cut0 = 0.9979
+# data02 = "data_old/Data_sig_tos_weights-Run2"; opt_cut0 = 0.9979
 
-data1 = "data_new/Data_sig_tos_weights-Run1"; opt_cut1 = 0.9968
-data2 = "data_new/Data_sig_tos_weights-Run2"; opt_cut2 = 0.9693
-data3 = "data_new/Data_sig_tis_weights-Run1"; opt_cut3 = 0.9988
-data4 = "data_new/Data_sig_tis_weights-Run2"; opt_cut4 = 0.9708
+data1 = "../data_new/Data_sig_tos_weights-Run1.pkl"; opt_cut1 = 0.9968
+data2 = "../data_new/Data_sig_tos_weights-Run2.pkl"; opt_cut2 = 0.9693
+data3 = "../data_new/Data_sig_tis_weights-Run1.pkl"; opt_cut3 = 0.9988
+data4 = "../data_new/Data_sig_tis_weights-Run2.pkl"; opt_cut4 = 0.9708
 
 #convert pkl file to txt file
 run_cmd("mkdir output")
