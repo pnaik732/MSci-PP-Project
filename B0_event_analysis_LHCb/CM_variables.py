@@ -1,9 +1,17 @@
+#************************************************
+#find the CM variables and 
+#triple product asymmetry
+#for the regular and conjugate decays
+
+#@Author: Tailin Zhu
+#************************************************
+
 import numpy as np
-import uproot 
 import pandas as pd
 import ROOT
 import sys
 
+### boost to the rest frame of B0 ###
 def boost_to_mother(particle1,particle2,particle3,particle4,motherparicle):
     boosttomother = -(motherparicle.BoostVector())
     particle1.Boost(boosttomother)
@@ -57,8 +65,7 @@ def main (program,data,name):
 		locals()['ID_%d'         % (i)] = df.K_Kst0_ID[i]
 		boost_to_mother(locals()['D0_lv_%d'% (i)],locals()['Dbar0_lv_%d' % (i)],locals()['Kplus_lv_%d' % (i)],locals()['Piminus_lv_%d' % (i)],locals()['B0_lv_%d' % (i)])
 
-
-#       check if it boost correctly		
+#       #check if it boost correctly		
 # 		print(locals()['B0_lv_%d' % (i)][0],locals()['B0_lv_%d' % (i)][1],locals()['B0_lv_%d' % (i)][2],locals()['B0_lv_%d' % (i)][3])
 # 		locals()['B0_lv_%d' % (i)].Boost(-locals()['B0_lv_%d' % (i)].BoostVector())
 # 		print(locals()['B0_lv_%d' % (i)][0],locals()['B0_lv_%d' % (i)][1],locals()['B0_lv_%d' % (i)][2],locals()['B0_lv_%d' % (i)][3])
@@ -75,19 +82,15 @@ def main (program,data,name):
 		locals()['cosTheta_KpPim_Kp_%d'   % (i)] = coshel(locals()['Kplus_lv_%d' % (i)], locals()['momKpPim_%d'   % (i)], locals()['momD0Dbar0KpPim_%d' % (i)])
 		locals()['Phi_%d'                 % (i)] = planeangle(locals()['D0_lv_%d' % (i)], locals()['Dbar0_lv_%d' % (i)], locals()['Kplus_lv_%d' % (i)], locals()['Piminus_lv_%d' % (i)], locals()['momD0Dbar0KpPim_%d' % (i)])
 
-		#triple products
-		
-		#D0.(K+ X pi-)
-		#locals()['C_Kpd_D0cDbar0_%d' % (i)] = tripleproduct(locals()['Kplus_lv_%d' % (i)], locals()['Piminus_lv_%d' % (i)], locals()['D0_lv_%d' % (i)])
-		#K+.(D0 X Dbar0)
-		locals()['C_Kpd_D0cDbar0_%d' % (i)] = tripleproduct(locals()['D0_lv_%d' % (i)], locals()['Dbar0_lv_%d' % (i)], locals()['Kplus_lv_%d' % (i)])
-
-
 		#find the invariant mass for the four particles
 		locals()['invmass_D0Dbar0KpPim_%d' % (i)] = locals()['momD0Dbar0KpPim_%d' % (i)].M()
+		
+		#regular decays
 		if locals()['ID_%d' % (i)] == 321:
+			#triple products K+.(D0 X Dbar0)
+			locals()['C_Kpd_D0cDbar0_%d' % (i)] = tripleproduct(locals()['D0_lv_%d' % (i)], locals()['Dbar0_lv_%d' % (i)], locals()['Kplus_lv_%d' % (i)])
 			with open('results_%s/B0_CM_variables.txt'%(name),mode='a') as f:
-				f.write("%.8f %.8f %.8f %.8f %.8f %.8f %.10f %.8f" % (locals()['Phi_%d'                  % (i)],
+				f.write("%.18f %.18f %.18f %.18f %.18f %.18f %.10f %.18f" % (locals()['Phi_%d'                  % (i)],
 														              locals()['invmass_D0Dbar0_%d'      % (i)],
 														              locals()['invmass_KpPim_%d'        % (i)],
 														              locals()['cosTheta_D0Dbar0_D0_%d'  % (i)],
@@ -98,14 +101,23 @@ def main (program,data,name):
 														              + "\n")
 			
 			with open("results_%s/B0toDDbarK_pi-_LHCb.txt"%(name),mode='a') as f2:
-				f2.write("%.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f"%(df.D0_PE[i]/1000,      df.D0_PX[i]/1000,      df.D0_PY[i]/1000,      df.D0_PZ[i]/1000,      
+				f2.write("%.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f"%(df.D0_PE[i]/1000,      df.D0_PX[i]/1000,      df.D0_PY[i]/1000,      df.D0_PZ[i]/1000,      
 			  																									 df.D0bar_PE[i]/1000,   df.D0bar_PX[i]/1000,   df.D0bar_PY[i]/1000,   df.D0bar_PZ[i]/1000,
 																												 df.K_Kst0_PE[i]/1000,  df.K_Kst0_PX[i]/1000,  df.K_Kst0_PY[i]/1000,  df.K_Kst0_PZ[i]/1000,  
-																												 df.Pi_Kst0_PE[i]/1000, df.Pi_Kst0_PX[i]/1000, df.Pi_Kst0_PY[i]/1000, df.Pi_Kst0_PZ[i]/1000, 
-																												 df.sWeights[i])+ "\n")	
+																												 df.Pi_Kst0_PE[i]/1000, df.Pi_Kst0_PX[i]/1000, df.Pi_Kst0_PY[i]/1000, df.Pi_Kst0_PZ[i]/1000, 																				
+																												 df.sWeights[i])+ "\n")
+			with open("results_%s/B0toDDbarK_pi-_all_LHCb.txt"%(name),mode='a') as f3:
+				f3.write("%.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f"%(df.D0_PE[i]/1000,      df.D0_PX[i]/1000,      df.D0_PY[i]/1000,      df.D0_PZ[i]/1000,      
+			  																									 df.D0bar_PE[i]/1000,   df.D0bar_PX[i]/1000,   df.D0bar_PY[i]/1000,   df.D0bar_PZ[i]/1000,
+																												 df.K_Kst0_PE[i]/1000,  df.K_Kst0_PX[i]/1000,  df.K_Kst0_PY[i]/1000,  df.K_Kst0_PZ[i]/1000,  
+																												 df.Pi_Kst0_PE[i]/1000, df.Pi_Kst0_PX[i]/1000, df.Pi_Kst0_PY[i]/1000, df.Pi_Kst0_PZ[i]/1000, 																							
+																												 df.sWeights[i])+ "\n")																								 
+		#conjugate decays
 		if locals()['ID_%d' % (i)] == -321:	
+			#triple products K+.(D0 X Dbar0)
+			locals()['C_Kpd_D0cDbar0_%d' % (i)] = tripleproduct(locals()['Dbar0_lv_%d' % (i)], locals()['D0_lv_%d' % (i)], locals()['Kplus_lv_%d' % (i)])
 			with open('results_%s/B0_CM_variables_conj.txt'%(name),mode='a') as f:
-				f.write("%.8f %.8f %.8f %.8f %.8f %.8f %.10f %.8f" % (locals()['Phi_%d'                  % (i)],
+				f.write("%.18f %.18f %.18f %.18f %.18f %.18f %.10f %.18f" % (locals()['Phi_%d'                  % (i)],
 														              locals()['invmass_D0Dbar0_%d'      % (i)],
 														              locals()['invmass_KpPim_%d'        % (i)],
 														              locals()['cosTheta_D0Dbar0_D0_%d'  % (i)],
@@ -116,11 +128,18 @@ def main (program,data,name):
 														              + "\n")
 			
 			with open("results_%s/B0toDDbarK_pi-_conj_LHCb.txt"%(name),mode='a') as f2:
-				f2.write("%.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f %.8f"%(df.D0_PE[i]/1000,      df.D0_PX[i]/1000,      df.D0_PY[i]/1000,      df.D0_PZ[i]/1000,      
-																													  df.D0bar_PE[i]/1000,   df.D0bar_PX[i]/1000,   df.D0bar_PY[i]/1000,   df.D0bar_PZ[i]/1000,
-																													  df.K_Kst0_PE[i]/1000,  df.K_Kst0_PX[i]/1000,  df.K_Kst0_PY[i]/1000,  df.K_Kst0_PZ[i]/1000,  
-																													  df.Pi_Kst0_PE[i]/1000, df.Pi_Kst0_PX[i]/1000, df.Pi_Kst0_PY[i]/1000, df.Pi_Kst0_PZ[i]/1000, 
-																													  df.sWeights[i])+ "\n")
+				f2.write("%.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f"%(df.D0bar_PE[i]/1000,      -df.D0bar_PX[i]/1000,      -df.D0bar_PY[i]/1000,      -df.D0bar_PZ[i]/1000,      
+																													 			  df.D0_PE[i]/1000,         -df.D0_PX[i]/1000,         -df.D0_PY[i]/1000,         -df.D0_PZ[i]/1000,
+																													 			  df.K_Kst0_PE[i]/1000,     -df.K_Kst0_PX[i]/1000,     -df.K_Kst0_PY[i]/1000,     -df.K_Kst0_PZ[i]/1000,  
+																													 			  df.Pi_Kst0_PE[i]/1000,    -df.Pi_Kst0_PX[i]/1000,    -df.Pi_Kst0_PY[i]/1000,    -df.Pi_Kst0_PZ[i]/1000, 
+																													 			  df.sWeights[i])+ "\n")
+			with open("results_%s/B0toDDbarK_pi-_all_LHCb.txt"%(name),mode='a') as f3:
+				f3.write("%.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f %.18f"%(df.D0bar_PE[i]/1000,      -df.D0bar_PX[i]/1000,      -df.D0bar_PY[i]/1000,      -df.D0bar_PZ[i]/1000,      
+																													 			  df.D0_PE[i]/1000,         -df.D0_PX[i]/1000,         -df.D0_PY[i]/1000,         -df.D0_PZ[i]/1000,
+																													 			  df.K_Kst0_PE[i]/1000,     -df.K_Kst0_PX[i]/1000,     -df.K_Kst0_PY[i]/1000,     -df.K_Kst0_PZ[i]/1000,  
+																													 			  df.Pi_Kst0_PE[i]/1000,    -df.Pi_Kst0_PX[i]/1000,    -df.Pi_Kst0_PY[i]/1000,    -df.Pi_Kst0_PZ[i]/1000, 
+																													 			  df.sWeights[i])+ "\n")
+
 			
 if __name__ == '__main__':
 	PROGNAME    = sys.argv[0]

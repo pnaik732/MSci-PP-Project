@@ -1,8 +1,15 @@
+#************************************************
+#plot and fit the B0 resonances
+#find the asymmetries from the fit yields
+#find the asymmetries from the sWeight yields
+
+#@Author: Tailin Zhu
+#************************************************
+
 import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import scipy.stats as stats
-import pandas as pd
 import sys
 
 def Gaussian(x, A, mean, sigma):
@@ -63,8 +70,6 @@ def OneD_histo(ax,variable, weight, fit_func, title, label0, xlabel, style, hist
 	ax.yaxis.set_label_coords(-0.12, 0.9, transform=ax.transAxes)
 	ax.legend(fontsize=13,frameon=False)
 
-
-	
 def main (program,name):
 	CM_data      = np.transpose(np.loadtxt('results_%s/B0_CM_variables.txt'%(name)))
 	CM_data_conj = np.transpose(np.loadtxt('results_%s/B0_CM_variables_conj.txt'%(name)))
@@ -80,7 +85,7 @@ def main (program,name):
 	mKpi_n      = CM_data[2][(C_T < 0)]; mKpi_n_conj      = CM_data_conj[2][(C_T_conj < 0)]
 	sWeight_n   = CM_data[6][(C_T < 0)]; sWeight_n_conj   = CM_data_conj[6][(C_T_conj < 0)]
 	mB0_n       = CM_data[7][(C_T < 0)]; mB0_n_conj       = CM_data_conj[7][(C_T_conj < 0)]
-	
+
 	bin=100
 	f0,axs0 = plt.subplots(2,2,figsize=(9,8))
 	p0_list = [1,1,1]
@@ -94,7 +99,8 @@ def main (program,name):
 	mB0_n_height,      mB0_n_popt,      mB0_n_err      ,_ =  Fitting(np.array(mB0_n),      function, sWeight_n,      p0_list,bin)
 	mB0_p_height_conj, mB0_p_popt_conj, mB0_p_err_conj ,_ =  Fitting(np.array(mB0_p_conj), function, sWeight_p_conj, p0_list,bin)
 	mB0_n_height_conj, mB0_n_popt_conj, mB0_n_err_conj ,_ =  Fitting(np.array(mB0_n_conj), function, sWeight_n_conj, p0_list,bin)
-
+	
+	#find the asymmetries from the fitting
 	mB0_p_yield,       mB0_p_err1_yield,      mB0_p_err2_yield      = find_yield(mB0_p,      mB0_p_popt,      mB0_p_err,      bin)
 	mB0_n_yield,       mB0_n_err1_yield,      mB0_n_err2_yield      = find_yield(mB0_n,      mB0_n_popt,      mB0_n_err,      bin)
 	mB0_p_yield_conj,  mB0_p_err1_yield_conj, mB0_p_err2_yield_conj = find_yield(mB0_p_conj, mB0_p_popt_conj, mB0_p_err_conj, bin)
@@ -106,12 +112,14 @@ def main (program,name):
 	a_cp     = 0.5 * (A_T - A_T_conj)
 	a_cp_err = 0.5 * np.sqrt(A_T_err ** 2 + A_T_err_conj ** 2)
 	
+	#find the asymmetries using sWeights
 	A_T_weights,      A_T_weights_err      = find_a_t(np.sum(sWeight_p),        np.sqrt(np.sum(sWeight_p)),           0,     np.sum(sWeight_n),        np.sqrt(np.sum(sWeight_n)),           0)
 	A_T_weights_conj, A_T_weights_err_conj = find_a_t(np.sum(sWeight_p_conj),   np.sqrt(np.sum(sWeight_p_conj)),      0,     np.sum(sWeight_n_conj),   np.sqrt(np.sum(sWeight_n_conj)),      0)
 
 	a_cp_weights     = 0.5 * (A_T_weights - A_T_weights_conj)
 	a_cp_weights_err = 0.5 * np.sqrt(A_T_weights_err ** 2 + A_T_weights_err_conj ** 2)
 	
+	#plot histograms for B0 distributions
 	OneD_histo(ax0_1,np.array(mB0_p),      sWeight_p,      function, "$B^0$ ($C_T>0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin)
 	OneD_histo(ax0_2,np.array(mB0_n),      sWeight_n,      function, "$B^0$ ($C_T<0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin)
 	OneD_histo(ax0_3,np.array(mB0_p_conj), sWeight_p_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T>0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin)
@@ -125,6 +133,7 @@ def main (program,name):
 	f0.tight_layout()
 	f0.savefig("results_%s/invmass_B0_fit_tp.png"%(name))
 	
+	#get the results
 	event_n_weight = np.sum(mB0_p_height)+np.sum(mB0_n_height)+np.sum(mB0_p_height_conj)+np.sum(mB0_n_height_conj)
 	print("total number of data after weight:", event_n_weight,"=",np.sum(mB0_p_height),"+",np.sum(mB0_n_height),"+",np.sum(mB0_p_height_conj),"+",np.sum(mB0_n_height_conj))
 	print("weights", np.sum(sWeight_p),np.sum(sWeight_n),np.sum(sWeight_p_conj),np.sum(sWeight_n_conj))

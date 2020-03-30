@@ -1,3 +1,10 @@
+#************************************************
+#Find the asymmetries by cutting the data
+#around the B0 resonance (Method 3)
+
+#@Author: Tailin Zhu
+#************************************************
+
 import numpy as np
 import sys
 

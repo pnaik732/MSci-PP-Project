@@ -1,3 +1,9 @@
+#************************************************
+#convert the LHCb data file to ROOT files
+
+#@Author: Tailin Zhu
+#************************************************
+
 import pandas as pd
 import numpy as np
 import uproot
@@ -43,25 +49,19 @@ def convert(file,df):
 def main(progname, name):
 	df     =np.transpose(np.loadtxt("results_%s/B0toDDbarK_pi-_LHCb.txt"     %(name)))
 	df_conj=np.transpose(np.loadtxt("results_%s/B0toDDbarK_pi-_conj_LHCb.txt"%(name)))
-
-# 	df.columns = ['_1_D0_E', '_1_D0_Px', '_1_D0_Py', '_1_D0_Pz', '_2_Dbar0_E', '_2_Dbar0_Px', '_2_Dbar0_Py','_2_Dbar0_Pz', '_3_K~_E', '_3_K~_Px', '_3_K~_Py', '_3_K~_Pz', '_4_pi#_E', '_4_pi#_Px', '_4_pi#_Py', '_4_pi#_Pz', 'weight']
-# 	df_conj.columns = ['_1_Dbar0_E', '_1_D0bar_Px', '_1_Dbar0_Py', '_1_Dbar0_Pz', '_2_D0_E', '_2_D0_Px', '_2_D0_Py','_2_D0_Pz', '_3_K#_E', '_3_K#_Px', '_3_K#_Py', '_3_K#_Pz', '_4_pi~_E', '_4_pi~_Px', '_4_pi~_Py', '_4_pi~_Pz', 'weight']
-# 	df.insert(0, "entry", np.arange(0,len(df.index)), True)
-# 	df_conj.insert(0, "entry", np.arange(0,len(df_conj.index)), True)
-# 
-# 	df.to_csv("results_%s/B0toDDbarK_pi-_LHCb.txt"     %(name), sep=' ', mode='w',index=False)
-# 	df_conj.to_csv("results_%s/B0toDDbarK_pi-_conj_LHCb.txt"     %(name), sep=' ',mode='w',index=False)
-# 	
+	df_all =np.transpose(np.loadtxt("results_%s/B0toDDbarK_pi-_all_LHCb.txt" %(name))) 	
 	file = uproot.recreate("results_%s/Event.root"%(name))
 	file_conj = uproot.recreate("results_%s/Event_conj.root"%(name))
+	file_all = uproot.recreate("results_%s/Event_all.root"%(name))
 	convert(file,df)
 	convert(file_conj,df_conj)
+	convert(file_all,df_all)
 	
-	test = uproot.open("results_%s/Event.root"%(name))['DalitzEventList']
-	df0 = test.pandas.df()
-	df0.to_csv("results_%s/test.txt"%(name), sep=' ', mode='a')
-	#df = df.rename_axis('entry', axis=1)
-	#df_conj = df_conj.rename_axis('entry', axis=1)
+# 	#check if the file is converted correctly
+# 	test = uproot.open("results_%s/Event.root"%(name))['DalitzEventList']
+# 	df0 = test.pandas.df()
+# 	df0.to_csv("results_%s/test.txt"%(name), sep=' ', mode='a')
+
 
 if __name__ == '__main__':
     PROGNAME    = sys.argv[0]

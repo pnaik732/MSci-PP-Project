@@ -1,3 +1,9 @@
+#************************************************
+#plot the distributions of CM variables
+
+#@Author: Tailin Zhu
+#************************************************
+
 import numpy as np
 import ROOT
 from ROOT import gPad
