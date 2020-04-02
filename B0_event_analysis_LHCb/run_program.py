@@ -24,10 +24,10 @@ def run_cmd(cmd):
 # data01 = "data_old/Data_sig_tos_weights-Run1"; opt_cut0 = 0.9979
 # data02 = "data_old/Data_sig_tos_weights-Run2"; opt_cut0 = 0.9979
 
-data1 = "../data_new/Data_sig_tos_weights-Run1.pkl"; opt_cut1 = 0.9968
-data2 = "../data_new/Data_sig_tos_weights-Run2.pkl"; opt_cut2 = 0.9693
-data3 = "../data_new/Data_sig_tis_weights-Run1.pkl"; opt_cut3 = 0.9988
-data4 = "../data_new/Data_sig_tis_weights-Run2.pkl"; opt_cut4 = 0.9708
+data1 = "data_new/Data_sig_tos_weights-Run1"; opt_cut1 = 0.9968
+data2 = "data_new/Data_sig_tos_weights-Run2"; opt_cut2 = 0.9693
+data3 = "data_new/Data_sig_tis_weights-Run1"; opt_cut3 = 0.9988
+data4 = "data_new/Data_sig_tis_weights-Run2"; opt_cut4 = 0.9708
 
 #convert pkl file to txt file
 run_cmd("mkdir output")
@@ -59,7 +59,7 @@ run_cmd("python converter.py %s %.5f"         % (data4,opt_cut4));      print("C
 # run_cmd("python asymmetries.py %s"            % (name02));       print("asymmetries from cut data: done")
 
 name  = "run1ADDrun2_new_nondup"
-# name  = "run1ADDrun2_new_BW"
+name  = "run1ADDrun2_new_BW"
 run_cmd("mkdir results_%s"%(name))
 run_cmd("python CM_variables.py %s %s"        % (data1,name)); print("calculate CM variables: done")
 run_cmd("python CM_variables.py %s %s"        % (data2,name)); print("calculate CM variables: done")

@@ -35,7 +35,7 @@ def Fitting(variable, fit_func, weight, p0_list,bin):
 
     #-------- plottings ------------------
     variable_fit = np.linspace (bin_edges[0], bin_edges[-1], 10000)  #array for independent variables
-    return height, popt, np.sqrt(np.diag(pcov)), variable_fit
+    return height, popt, np.sqrt(np.diag(pcov)), variable_fit, bin_edges
 
 def find_yield(variable, variable_popt, variable_err, bin):
 	delta_variable = (max(variable) - min(variable)) / bin
@@ -51,9 +51,10 @@ def find_a_t(c_p, c_p_err1, c_p_err2, c_n, c_n_err1, c_n_err2):
 	Asy_err = ((c_p_err * 2 * c_n / (c_p + c_n) ** 2) ** 2 + (c_n_err * 2 * c_p / (c_p + c_n) ** 2) ** 2) ** 0.5
 	return Asy,Asy_err
 	
-def OneD_histo(ax,variable, weight, fit_func, title, label0, xlabel, style, histtype, p0_list, bin):
+def OneD_histo(ax,variable, weight, fit_func, title, label0, xlabel, style, histtype, p0_list, bin, sub_label):
 	'''Plot the histogram for the interested variable, used in Task1 and Task2.'''
-	_, popt, perr, variable_fit = Fitting(variable, fit_func,weight, p0_list,bin)
+	height, popt, perr, variable_fit,bin_edges = Fitting(variable, fit_func,weight, p0_list,bin)
+	centre = bin_edges[:-1] + np.diff (bin_edges) / 2
 	nstd = 1. # to draw 5sigma intervals
 	popt_up = popt + nstd * perr
 	popt_dw = popt - nstd * perr
@@ -61,14 +62,28 @@ def OneD_histo(ax,variable, weight, fit_func, title, label0, xlabel, style, hist
 	fit = fit_func(variable_fit, *popt)
 	fit_up = fit_func(variable_fit, *popt_up)
 	fit_dw = fit_func(variable_fit, *popt_dw)
-
-	ax.hist(variable, bins=bin, histtype=histtype, label=title,lw=1, weights=weight, color="k")  #histo distribution
+	
+	bins=np.digitize(variable,bin_edges)
+	error_list=[]
+	for b in range (len(centre)):
+		bin_ws = weight[np.where(bins==b)[0]]
+		error = np.sqrt(np.sum(bin_ws**2.))
+		error_list.append(error)
+	
+	error_x = np.diff (bin_edges) / 2
+	ax.errorbar(centre,height,yerr=error_list, xerr=error_x, fmt="ko",ms=1,capsize=1,lw=1,label=title)
+# 	ax.hist(variable, bins=bin, histtype=histtype, label=title,lw=1, weights=weight, color="k")  #histo distribution
 	ax.plot(variable_fit, fit_func(variable_fit, *popt), style, label = label0,linewidth = 1) #fitting curve
+# 	ax.bar(popt[1:],height*weight)
 	ax.fill_between(variable_fit, fit_up, fit_dw, alpha=0.25, color="b", label='$1\sigma$ interval')
 	ax.set(xlabel=xlabel, ylabel="Candidates")
-	ax.xaxis.set_label_coords(0.8, -0.11,  transform=ax.transAxes)
-	ax.yaxis.set_label_coords(-0.12, 0.9, transform=ax.transAxes)
+	ax.xaxis.set_label_coords(0.7, -0.11,  transform=ax.transAxes)
+	ax.yaxis.set_label_coords(-0.15, 0.8, transform=ax.transAxes)
 	ax.legend(fontsize=13,frameon=False)
+	ax.text(0.03,0.9,sub_label,transform=ax.transAxes,size=13)
+	for item in ([ax.xaxis.label, ax.yaxis.label] +
+             ax.get_xticklabels() + ax.get_yticklabels()):
+		item.set_fontsize(13)
 
 def main (program,name):
 	CM_data      = np.transpose(np.loadtxt('results_%s/B0_CM_variables.txt'%(name)))
@@ -95,10 +110,10 @@ def main (program,name):
 	else:
 		function = Gaussian;     fit_label = "fit (Gaussian)"
 	
-	mB0_p_height,      mB0_p_popt,      mB0_p_err      ,_ =  Fitting(np.array(mB0_p),      function, sWeight_p,      p0_list,bin)
-	mB0_n_height,      mB0_n_popt,      mB0_n_err      ,_ =  Fitting(np.array(mB0_n),      function, sWeight_n,      p0_list,bin)
-	mB0_p_height_conj, mB0_p_popt_conj, mB0_p_err_conj ,_ =  Fitting(np.array(mB0_p_conj), function, sWeight_p_conj, p0_list,bin)
-	mB0_n_height_conj, mB0_n_popt_conj, mB0_n_err_conj ,_ =  Fitting(np.array(mB0_n_conj), function, sWeight_n_conj, p0_list,bin)
+	mB0_p_height,      mB0_p_popt,      mB0_p_err      ,_,_ =  Fitting(np.array(mB0_p),      function, sWeight_p,      p0_list,bin)
+	mB0_n_height,      mB0_n_popt,      mB0_n_err      ,_,_ =  Fitting(np.array(mB0_n),      function, sWeight_n,      p0_list,bin)
+	mB0_p_height_conj, mB0_p_popt_conj, mB0_p_err_conj ,_,_ =  Fitting(np.array(mB0_p_conj), function, sWeight_p_conj, p0_list,bin)
+	mB0_n_height_conj, mB0_n_popt_conj, mB0_n_err_conj ,_,_ =  Fitting(np.array(mB0_n_conj), function, sWeight_n_conj, p0_list,bin)
 	
 	#find the asymmetries from the fitting
 	mB0_p_yield,       mB0_p_err1_yield,      mB0_p_err2_yield      = find_yield(mB0_p,      mB0_p_popt,      mB0_p_err,      bin)
@@ -120,15 +135,14 @@ def main (program,name):
 	a_cp_weights_err = 0.5 * np.sqrt(A_T_weights_err ** 2 + A_T_weights_err_conj ** 2)
 	
 	#plot histograms for B0 distributions
-	OneD_histo(ax0_1,np.array(mB0_p),      sWeight_p,      function, "$B^0$ ($C_T>0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin)
-	OneD_histo(ax0_2,np.array(mB0_n),      sWeight_n,      function, "$B^0$ ($C_T<0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin)
-	OneD_histo(ax0_3,np.array(mB0_p_conj), sWeight_p_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T>0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin)
-	OneD_histo(ax0_4,np.array(mB0_n_conj), sWeight_n_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T<0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin)
+	OneD_histo(ax0_1,np.array(mB0_p),      sWeight_p,      function, "$B^0$ ($C_T>0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin,"(a)")
+	OneD_histo(ax0_2,np.array(mB0_n),      sWeight_n,      function, "$B^0$ ($C_T<0$)",                fit_label, "$m(D^0\\bar{D}^0K^+\pi^-)[GeV/c^2]$", "b-", "step", p0_list,bin,"(b)")
+	OneD_histo(ax0_3,np.array(mB0_p_conj), sWeight_p_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T>0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin,"(c)")
+	OneD_histo(ax0_4,np.array(mB0_n_conj), sWeight_n_conj, function, "$\\bar{B}^0$ ($-\\bar{C}_T<0$)", fit_label, "$m(\\bar{D}^0D^0K^-\pi^+)[GeV/c^2]$", "b-", "step", p0_list,bin,"(d)")
 	
 	mB0_all_min        = [min(mB0_p),         min(mB0_n),        min(mB0_p_conj),        min(mB0_n_conj)]
 	mB0_all_max        = [max(mB0_p),         max(mB0_n),        max(mB0_p_conj),        max(mB0_n_conj)]
 	mB0_all_height_max = [max(mB0_p_height),  max(mB0_n_height), max(mB0_p_height_conj), max(mB0_n_height_conj)]
-
 	plt.setp(axs0, xlim=(min(mB0_all_min),max(mB0_all_max)), ylim=(0,1.3*max(mB0_all_height_max)))
 	f0.tight_layout()
 	f0.savefig("results_%s/invmass_B0_fit_tp.png"%(name))
